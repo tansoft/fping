@@ -134,8 +134,8 @@ extern int h_errno;
 
 /*** Ping packet defines ***/
 
-#define MAX_IP_PACKET 65536 /* (theoretical) max IP packet size */
-#define SIZE_IP_HDR 40
+#define MAX_IP_PACKET 65535 /* (theoretical) max IPv4 packet size */
+#define SIZE_IP_HDR 20 /* min IPv4 header size */
 #define SIZE_ICMP_HDR 8 /* from ip_icmp.h */
 #define MAX_PING_DATA (MAX_IP_PACKET - SIZE_IP_HDR - SIZE_ICMP_HDR)
 
@@ -952,7 +952,7 @@ int main(int argc, char **argv)
 #endif
 
     if (ping_data_size > MAX_PING_DATA) {
-        fprintf(stderr, "%s: data size %u not valid, must be lower than %u\n",
+        fprintf(stderr, "%s: data size %u not valid, must not be larger than %u\n",
             prog, ping_data_size, (unsigned int)MAX_PING_DATA);
         exit(1);
     }
