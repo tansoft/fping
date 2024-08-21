@@ -362,6 +362,7 @@ int random_data_flag = 0;
 int cumulative_stats_flag = 0;
 int check_source_flag = 0;
 int print_tos_flag = 0;
+int print_ttl_flag = 0;
 #if defined(DEBUG) || defined(_DEBUG)
 int randomly_lose_flag, trace_flag, print_per_system_flag;
 int lose_factor;
@@ -560,6 +561,7 @@ int main(int argc, char **argv)
         { "fast-reachable", 'X', OPTPARSE_REQUIRED },
         { "check-source", '0', OPTPARSE_NONE },
         { "print-tos", '0', OPTPARSE_NONE },
+        { "print-ttl", '0', OPTPARSE_NONE },
 #if defined(DEBUG) || defined(_DEBUG)
         { NULL, 'z', OPTPARSE_REQUIRED },
 #endif
@@ -584,6 +586,8 @@ int main(int argc, char **argv)
                 check_source_flag = 1;
             } else if (strstr(optparse_state.optlongname, "print-tos") != NULL) {
                 print_tos_flag = 1;
+            } else if (strstr(optparse_state.optlongname, "print-ttl") != NULL) {
+                print_ttl_flag = 1;
             } else {
                 usage(1);
             }
@@ -2164,7 +2168,8 @@ int decode_icmp_ipv4(
     size_t reply_buf_len,
     unsigned short *id,
     unsigned short *seq,
-    int *ip_header_tos)
+    int *ip_header_tos,
+    int *ip_header_ttl)
 {
     struct icmp *icp;
     int hlen = 0;
@@ -2172,6 +2177,7 @@ int decode_icmp_ipv4(
     if (!using_sock_dgram4) {
         struct ip *ip = (struct ip *)reply_buf;
         *ip_header_tos = ip->ip_tos;
+        *ip_header_ttl = ip->ip_ttl;
 
 #if defined(__alpha__) && __STDC__ && !defined(__GLIBC__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
         /* The alpha headers are decidedly broken.
@@ -2373,6 +2379,7 @@ int wait_for_reply(int64_t wait_time)
     unsigned short id;
     unsigned short seq;
     int ip_header_tos = -1;
+    int ip_header_ttl = -1;
 
     /* Receive packet */
     result = receive_packet(wait_time, /* max. wait time, in ns */
@@ -2400,7 +2407,8 @@ int wait_for_reply(int64_t wait_time)
             sizeof(buffer),
             &id,
             &seq,
-            &ip_header_tos);
+            &ip_header_tos,
+            &ip_header_ttl);
         if (ip_hlen < 0) {
             return 1;
         }
@@ -2516,6 +2524,15 @@ int wait_for_reply(int64_t wait_time)
                           printf(" (TOS unknown)");
                       }
                   }
+            }
+
+            if (print_ttl_flag) {
+              if(ip_header_ttl != -1) {
+                  printf(" (TTL %d)", ip_header_ttl);
+              }
+              else {
+                  printf(" (TTL unknown)");
+              }
             }
 
             if (elapsed_flag)
@@ -3088,5 +3105,6 @@ void usage(int is_error)
     fprintf(out, "   -x, --reachable=N  shows if >=N hosts are reachable or not\n");
     fprintf(out, "   -X, --fast-reachable=N exits true immediately when N hosts are found\n");
     fprintf(out, "       --print-tos    show tos value\n");
+    fprintf(out, "       --print-ttl    show IP TTL value\n");
     exit(is_error);
 }

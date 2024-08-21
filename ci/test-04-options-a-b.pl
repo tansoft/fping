@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-use Test::Command tests => 32;
+use Test::Command tests => 41;
 use Test::More;
 use Time::HiRes qw(gettimeofday tv_interval);
 
@@ -66,6 +66,33 @@ my $cmd = Test::Command->new(cmd => "fping -a 127.0.0.1 127.0.0.2");
 $cmd->exit_is_num(0);
 $cmd->stdout_is_eq("127.0.0.1\n127.0.0.2\n");
 $cmd->stderr_is_eq("");
+}
+
+# fping -a --print-ttl
+{
+my $cmd = Test::Command->new(cmd => "fping -a --print-ttl 127.0.0.1 127.0.0.2");
+$cmd->exit_is_num(0);
+$cmd->stdout_like(qr{127\.0\.0\.1 \(TTL \d+\)\n127\.0\.0\.2 \(TTL \d+\)\n});
+$cmd->stderr_is_eq("");
+}
+
+# fping --print-ttl
+{
+my $cmd = Test::Command->new(cmd => "fping --print-ttl 127.0.0.1");
+$cmd->exit_is_num(0);
+$cmd->stdout_like(qr{127\.0\.0\.1 is alive \(TTL \d+\)});
+$cmd->stderr_is_eq("");
+}
+
+# fping --print-ttl with IPv6
+SKIP: {
+    if($ENV{SKIP_IPV6}) {
+        skip 'Skip IPv6 tests', 3;
+    }
+    my $cmd = Test::Command->new(cmd => "fping --print-ttl ::1");
+    $cmd->exit_is_num(0);
+    $cmd->stdout_like(qr{::1 is alive \(TTL unknown\)\n});
+    $cmd->stderr_is_eq("");
 }
 
 # fping -A

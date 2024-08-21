@@ -140,6 +140,12 @@ Print usage message.
 
 Set the IP TTL field (time to live hops).
 
+=item B<--print-ttl>
+
+Displays the IPv4 TTL value from the IP Header in the output.
+If B<fping> cannot read the TTL value, "(TTL unknown)" is returned.
+IPv4 only, requires root privileges or cap_net_raw.
+
 =item B<-i>, B<--interval>=I<MSEC>
 
 The minimum amount of time (in milliseconds) between sending a ping packet
