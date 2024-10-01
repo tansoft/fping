@@ -392,7 +392,7 @@ void print_netdata(void);
 void print_global_stats(void);
 void main_loop();
 void signal_handler(int);
-void finish();
+int finish();
 const char *sprint_tm(int64_t t);
 void ev_enqueue(struct event_queue *queue, struct event *event);
 struct event *ev_dequeue(struct event_queue *queue);
