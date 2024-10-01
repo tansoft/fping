@@ -91,7 +91,7 @@ void init_ping_buffer_ipv6(size_t ping_data_size)
 }
 
 #ifdef CENTRAL_MODE
-void init_ping_buffer_ipv6()
+void uninit_ping_buffer_ipv6()
 {
     if (ping_buffer_ipv6) {
         free(ping_buffer_ipv6);

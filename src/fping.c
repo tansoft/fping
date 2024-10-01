@@ -372,6 +372,8 @@ unsigned int fwmark = 0;
 
 char *filename = NULL; /* file containing hosts to ping */
 
+int exit_code = 0;
+
 /*** forward declarations ***/
 
 void add_name(char *name);
@@ -485,7 +487,9 @@ int main(int argc, char **argv)
         usage(0);
     }
 
-    socket4 = open_ping_socket_ipv4(&socktype4);
+    if (socket4 == -1) {
+        socket4 = open_ping_socket_ipv4(&socktype4);
+    }
 #ifdef __linux__
     /* We only treat SOCK_DGRAM differently on Linux, where the IPv4 header
      * structure is missing in the message.
@@ -494,7 +498,9 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef IPV6
-    socket6 = open_ping_socket_ipv6(&socktype6);
+    if (socket6 == -1) {
+        socket6 = open_ping_socket_ipv6(&socktype6);
+    }
     /* if called (sym-linked) via 'fping6', imply '-6'
      * for backward compatibility */
     if (strstr(prog, "fping6")) {
@@ -1256,13 +1262,13 @@ int main(int argc, char **argv)
     printf("[DEBUG] CPU time used: %f sec", perf_cpu_time_used);
 #endif /* DEBUG || _DEBUG */
 
-    finish();
+    exit_code = finish();
 
 #ifdef CENTRAL_MODE
     clean_up();
 #endif
 
-    return 0;
+    return exit_code;
 }
 
 static inline int64_t timespec_ns(struct timespec *a)
@@ -1613,7 +1619,7 @@ void update_current_time()
 
 ************************************************************/
 
-void finish()
+int finish()
 {
     int i;
     HOST_ENTRY *h;
@@ -1652,20 +1658,20 @@ void finish()
     if (min_reachable) {
         if ((num_hosts - num_unreachable) >= min_reachable) {
             printf("Enough hosts reachable (required: %d, reachable: %d)\n", min_reachable, num_hosts - num_unreachable);
-            exit(0);
+            return 0;
         }
         else {
             printf("Not enough hosts reachable (required: %d, reachable: %d)\n", min_reachable, num_hosts - num_unreachable);
-            exit(1);
+            return 1;
         }
     }
 
     if (num_noaddress)
-        exit(2);
+        return 2;
     else if (num_alive != num_hosts)
-        exit(1);
+        return 1;
 
-    exit(0);
+    return 0;
 }
 
 /************************************************************
