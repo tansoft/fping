@@ -104,8 +104,8 @@ extern "C" {
 
 /*** externals ***/
 
-extern char *optarg;
-extern int optind, opterr;
+//extern char *optarg;
+//extern int optind, opterr;
 #ifndef h_errno
 extern int h_errno;
 #endif
@@ -406,6 +406,10 @@ struct event *host_get_timeout_event(HOST_ENTRY *h, int index);
 void stats_add(HOST_ENTRY *h, int index, int success, int64_t latency);
 void update_current_time();
 void print_timestamp_format(int64_t current_time_ns, int timestamp_format);
+
+#ifdef CENTRAL_MODE
+    #include "central_mode.inc"
+#endif
 
 /************************************************************
 
@@ -1253,6 +1257,10 @@ int main(int argc, char **argv)
 #endif /* DEBUG || _DEBUG */
 
     finish();
+
+#ifdef CENTRAL_MODE
+    clean_up();
+#endif
 
     return 0;
 }

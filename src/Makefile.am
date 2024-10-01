@@ -1,9 +1,11 @@
 AM_CFLAGS = -Wall -Wextra -Wno-sign-compare
 
+AM_LDFLAGS = -static
+
 sbin_PROGRAMS = fping
 
-fping_SOURCES = fping.c seqmap.c socket4.c fping.h options.h seqmap.h optparse.c optparse.h
-fping_DEPENDENCIES = ../config.h
+fping_SOURCES = fping.c seqmap.c socket4.c fping.h options.h seqmap.h optparse.c optparse.h central_mode.inc
+fping_DEPENDENCIES = ../config.h ../central_mode.h
 
 if IPV6
 fping_SOURCES += socket6.c

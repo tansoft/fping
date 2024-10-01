@@ -1,0 +1,1 @@
+#define CENTRAL_MODE 1

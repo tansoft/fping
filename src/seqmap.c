@@ -60,6 +60,16 @@ static unsigned int seqmap_next_id = 0;
 #define SEQMAP_TIMEOUT_IN_NS INT64_C(10000000000)
 #define SEQMAP_UNASSIGNED_HOST_NR UINT_MAX
 
+#ifdef CENTRAL_MODE
+void seqmap_reset()
+{
+    if (seqmap_map == NULL) {
+        memset(seqmap_map, 0, sizeof(SEQMAP_VALUE));
+    }
+    seqmap_next_id = 0;
+}
+#endif
+
 void seqmap_init()
 {
     seqmap_map = calloc(SEQMAP_MAXSEQ, sizeof(SEQMAP_VALUE));

@@ -90,6 +90,17 @@ void init_ping_buffer_ipv6(size_t ping_data_size)
         crash_and_burn("can't malloc ping packet");
 }
 
+#ifdef CENTRAL_MODE
+void init_ping_buffer_ipv6()
+{
+    if (ping_buffer_ipv6) {
+        free(ping_buffer_ipv6);
+        ping_buffer_ipv6 = 0;
+    }
+    ping_pkt_size_ipv6 = 0;
+}
+#endif
+
 void socket_set_src_addr_ipv6(int s, struct in6_addr* src_addr, int *ident)
 {
     struct sockaddr_in6 sa;

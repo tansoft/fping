@@ -91,6 +91,17 @@ void init_ping_buffer_ipv4(size_t ping_data_size)
         crash_and_burn("can't malloc ping packet");
 }
 
+#ifdef CENTRAL_MODE
+void uninit_ping_buffer_ipv4()
+{
+    if (ping_buffer_ipv4) {
+        free(ping_buffer_ipv4);
+        ping_buffer_ipv4 = 0;
+    }
+    ping_pkt_size_ipv4 = 0;
+}
+#endif
+
 void socket_set_src_addr_ipv4(int s, struct in_addr* src_addr, int *ident)
 {
     struct sockaddr_in sa;
