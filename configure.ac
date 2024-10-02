@@ -23,6 +23,8 @@ case "${target}" in
     ;;
 esac
 
+AM_CONDITIONAL([DARWIN], [case $target_os in darwin* ) true ;; * ) false ;; esac])
+
 dnl --disable-ipv4
 AC_ARG_ENABLE([ipv4],
   AS_HELP_STRING([--disable-ipv4], [Disable support for pinging IPv4 hosts]))

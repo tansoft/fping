@@ -1,10 +1,10 @@
 AM_CFLAGS = -Wall -Wextra -Wno-sign-compare
 
-ifndef __APPLE__
-AM_LDFLAGS += -static
+if DARWIN
+AM_LDFLAGS = -lcurl
+else	
+AM_LDFLAGS = -static -lcurl
 endif
-
-AM_LDFLAGS += -lcurl
 
 sbin_PROGRAMS = fping
 
