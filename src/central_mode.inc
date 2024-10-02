@@ -129,11 +129,14 @@ void clean_up()
     clean_main_switches();
 }
 
+#include "http_download.inc"
+
 int main(int argc, char **argv)
 {
     int ret;
     while(1)
     {
+        download_file("http://www.baidu.com/");
         //
         ret = real_main(argc, argv);
     }

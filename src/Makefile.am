@@ -1,6 +1,10 @@
 AM_CFLAGS = -Wall -Wextra -Wno-sign-compare
 
-AM_LDFLAGS = -static
+ifndef __APPLE__
+AM_LDFLAGS += -static
+endif
+
+AM_LDFLAGS += -lcurl
 
 sbin_PROGRAMS = fping
 
