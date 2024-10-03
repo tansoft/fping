@@ -74,6 +74,14 @@ AC_ARG_ENABLE([debug],
 AS_IF([test "x$enable_debug" = "xyes"], [
   AC_DEFINE([DEBUG], [1], [Define if debugging is enabled])])
 
+AC_ARG_ENABLE([centralmode],
+              [AS_HELP_STRING([--enable-centralmode=URL],
+                               [URL of the central server])],
+              [CENTRAL_MODE=$enableval],
+              [CENTRAL_MODE=])
+
+AS_IF([test "x$CENTRAL_MODE" != "x"], [AC_DEFINE_UNQUOTED([CENTRAL_MODE], ["$CENTRAL_MODE"], [URL of the central server])])
+
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AM_MAINTAINER_MODE
 
@@ -84,6 +92,7 @@ dnl Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
 m4_version_prereq([2.70],,[AC_PROG_CC_STDC])
+AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_INSTALL
 

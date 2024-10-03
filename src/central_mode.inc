@@ -129,17 +129,11 @@ void clean_up()
     clean_main_switches();
 }
 
-#include "http_download.inc"
+#include "central_func.h"
 
 int main(int argc, char **argv)
 {
-    int ret;
-    while(1)
-    {
-        download_file("http://www.baidu.com/");
-        //
-        ret = real_main(argc, argv);
-    }
+    return central_func(argc, argv);
 }
 
 #define main real_main
