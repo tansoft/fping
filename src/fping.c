@@ -104,8 +104,8 @@ extern "C" {
 
 /*** externals ***/
 
-//extern char *optarg;
-//extern int optind, opterr;
+// extern char *optarg;
+// extern int optind, opterr;
 #ifndef h_errno
 extern int h_errno;
 #endif
@@ -410,7 +410,7 @@ void update_current_time();
 void print_timestamp_format(int64_t current_time_ns, int timestamp_format);
 
 #ifdef CENTRAL_MODE
-    #include "central_mode.inc"
+#include "central_mode.inc"
 #endif
 
 /************************************************************
@@ -582,23 +582,30 @@ int main(int argc, char **argv)
     while ((c = optparse_long(&optparse_state, longopts, NULL)) != EOF) {
         switch (c) {
         case '0':
-            if(strstr(optparse_state.optlongname, "timestamp-format") != NULL) {
-                if(strcmp(optparse_state.optarg, "ctime") == 0) {
-                  timestamp_format_flag = 1;
-                }else if(strcmp(optparse_state.optarg, "iso") == 0) {
-                  timestamp_format_flag = 2;
-                }else if(strcmp(optparse_state.optarg, "rfc3339") == 0) {
-                  timestamp_format_flag = 3;
-                }else{
-                  usage(1);
+            if (strstr(optparse_state.optlongname, "timestamp-format") != NULL) {
+                if (strcmp(optparse_state.optarg, "ctime") == 0) {
+                    timestamp_format_flag = 1;
                 }
-            } else if (strstr(optparse_state.optlongname, "check-source") != NULL) {
+                else if (strcmp(optparse_state.optarg, "iso") == 0) {
+                    timestamp_format_flag = 2;
+                }
+                else if (strcmp(optparse_state.optarg, "rfc3339") == 0) {
+                    timestamp_format_flag = 3;
+                }
+                else {
+                    usage(1);
+                }
+            }
+            else if (strstr(optparse_state.optlongname, "check-source") != NULL) {
                 check_source_flag = 1;
-            } else if (strstr(optparse_state.optlongname, "print-tos") != NULL) {
+            }
+            else if (strstr(optparse_state.optlongname, "print-tos") != NULL) {
                 print_tos_flag = 1;
-            } else if (strstr(optparse_state.optlongname, "print-ttl") != NULL) {
+            }
+            else if (strstr(optparse_state.optlongname, "print-ttl") != NULL) {
                 print_ttl_flag = 1;
-            } else {
+            }
+            else {
                 usage(1);
             }
             break;
@@ -830,12 +837,12 @@ int main(int argc, char **argv)
                 usage(1);
 
             if (socket4 >= 0)
-                if(-1 == p_setsockopt(suid, socket4, SOL_SOCKET, SO_MARK, &fwmark, sizeof fwmark))
+                if (-1 == p_setsockopt(suid, socket4, SOL_SOCKET, SO_MARK, &fwmark, sizeof fwmark))
                     perror("fwmark ipv4");
 
 #ifdef IPV6
             if (socket6 >= 0)
-                if(-1 == p_setsockopt(suid, socket6, SOL_SOCKET, SO_MARK, &fwmark, sizeof fwmark))
+                if (-1 == p_setsockopt(suid, socket6, SOL_SOCKET, SO_MARK, &fwmark, sizeof fwmark))
                     perror("fwmark ipv6");
 #endif
 
@@ -1258,7 +1265,7 @@ int main(int argc, char **argv)
 /* Debug: CPU Performance */
 #if defined(DEBUG) || defined(_DEBUG)
     perf_cpu_end = clock();
-    perf_cpu_time_used = ((double) (perf_cpu_end - perf_cpu_start)) / CLOCKS_PER_SEC;
+    perf_cpu_time_used = ((double)(perf_cpu_end - perf_cpu_start)) / CLOCKS_PER_SEC;
     printf("[DEBUG] CPU time used: %f sec", perf_cpu_time_used);
 #endif /* DEBUG || _DEBUG */
 
@@ -2060,7 +2067,7 @@ int receive_packet(int64_t wait_time,
         reply_buf,
         reply_buf_len
     };
-    struct msghdr recv_msghdr = {0};
+    struct msghdr recv_msghdr = { 0 };
     recv_msghdr.msg_name = reply_src_addr;
     recv_msghdr.msg_namelen = reply_src_addr_len;
     recv_msghdr.msg_iov = &msg_iov;
@@ -2527,7 +2534,7 @@ int wait_for_reply(int64_t wait_time)
     if (h->num_recv == 1) {
         num_alive++;
         if (fast_reachable && num_alive >= min_reachable)
-                finish_requested = 1;
+            finish_requested = 1;
 
         if (verbose_flag || alive_flag) {
             printf("%s", h->host);
@@ -2535,8 +2542,8 @@ int wait_for_reply(int64_t wait_time)
             if (verbose_flag)
                 printf(" is alive");
 
-            if(print_tos_flag) {
-                if(ip_header_tos != -1) {
+            if (print_tos_flag) {
+                if (ip_header_tos != -1) {
                     printf(" (TOS %d)", ip_header_tos);
                 }
                 else {
@@ -2545,12 +2552,12 @@ int wait_for_reply(int64_t wait_time)
             }
 
             if (print_ttl_flag) {
-              if(ip_header_ttl != -1) {
-                  printf(" (TTL %d)", ip_header_ttl);
-              }
-              else {
-                  printf(" (TTL unknown)");
-              }
+                if (ip_header_ttl != -1) {
+                    printf(" (TTL %d)", ip_header_ttl);
+                }
+                else {
+                    printf(" (TTL unknown)");
+                }
             }
 
             if (elapsed_flag)
@@ -3033,24 +3040,24 @@ void print_timestamp_format(int64_t current_time_ns, int timestamp_format)
 
     current_time_s = current_time_ns / 1000000000;
     local_time = localtime(&current_time_s);
-    switch(timestamp_format) {
-        case 1:
-            // timestamp-format ctime
-            strftime(time_buffer, sizeof(time_buffer), "%c", local_time);
-            printf("[%s] ", time_buffer);
-            break;
-        case 2:
-            // timestamp-format iso
-            strftime(time_buffer, sizeof(time_buffer), "%Y-%m-%dT%T%z", local_time);
-            printf("[%s] ", time_buffer);
-            break;
-        case 3:
-            // timestamp-format rfc3339
-            strftime(time_buffer, sizeof(time_buffer), "%Y-%m-%d %H:%M:%S", local_time);
-            printf("[%s] ", time_buffer);
-            break;
-        default:
-            printf("[%.5f] ", (double)current_time_ns / 1e9);
+    switch (timestamp_format) {
+    case 1:
+        // timestamp-format ctime
+        strftime(time_buffer, sizeof(time_buffer), "%c", local_time);
+        printf("[%s] ", time_buffer);
+        break;
+    case 2:
+        // timestamp-format iso
+        strftime(time_buffer, sizeof(time_buffer), "%Y-%m-%dT%T%z", local_time);
+        printf("[%s] ", time_buffer);
+        break;
+    case 3:
+        // timestamp-format rfc3339
+        strftime(time_buffer, sizeof(time_buffer), "%Y-%m-%d %H:%M:%S", local_time);
+        printf("[%s] ", time_buffer);
+        break;
+    default:
+        printf("[%.5f] ", (double)current_time_ns / 1e9);
     }
 }
 
