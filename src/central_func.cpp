@@ -159,6 +159,8 @@ int central_func(int argc, char **argv)
     snprintf(useragent, 256, "%s/%s", program, VERSION);
     crtfun::setup_http_user_agent(useragent);
     crtfun::setup_http_post_json(true);
+    // ensure that the server has sufficient time for processing
+    crtfun::setup_http_global_timeout(90000);
 
     // snprintf(central_commitjob_url, 4096, "%sjob", CENTRAL_MODE);
 
