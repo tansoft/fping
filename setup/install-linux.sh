@@ -61,7 +61,7 @@ fi
 # 检测init system类型
 if command -v systemctl >/dev/null 2>&1; then
     # systemd
-    cat > /etc/systemd/system/${detector_type}.service << 'EOF'
+    cat > /etc/systemd/system/${detector_type}.service << EOF
 [Unit]
 Description=${detector_type} Service
 After=network.target
@@ -81,7 +81,7 @@ EOF
 
 elif [ -f /etc/init.d ]; then
     # sysvinit
-    cat > /etc/init.d/${detector_type} << 'EOF'
+    cat > /etc/init.d/${detector_type} << EOF
 #!/bin/sh
 ### BEGIN INIT INFO
 # Provides:          ${detector_type}
@@ -113,7 +113,7 @@ EOF
 
 elif [ -f /etc/init ]; then
     # upstart
-    cat > /etc/init/${detector_type}.conf << 'EOF'
+    cat > /etc/init/${detector_type}.conf << EOF
 description "${detector_type} Service"
 start on runlevel [2345]
 stop on runlevel [016]
