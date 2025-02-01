@@ -14,8 +14,6 @@
 
 detector_type=${1:-fping-job}
 
-#!/bin/bash
-
 # 定义下载URL和目标路径
 URL="https://github.com/tansoft/fping/raw/refs/heads/develop/setup/fping.x86_64"
 TARGET="/usr/bin/${detector_type}"
