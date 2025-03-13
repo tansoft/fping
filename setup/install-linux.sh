@@ -14,18 +14,32 @@
 
 detector_type=${1:-fping-job}
 
+# 检测系统架构
+ARCH=$(uname -m)
+if [ "$ARCH" = "x86_64" ]; then
+    echo "Detected x86_64 architecture"
+    PACKAGE_NAME="fping-x86_64.tar.gz"
+elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+    echo "Detected arm64 architecture"
+    PACKAGE_NAME="fping-arm64.tar.gz"
+else
+    echo "Unsupported architecture: $ARCH"
+    exit 1
+fi
+
 # 定义下载URL和目标路径
-URL="https://github.com/tansoft/fping/raw/refs/heads/develop/setup/fping.x86_64"
+URL="https://github.com/tansoft/fping/raw/refs/heads/develop/setup/${PACKAGE_NAME}"
+DOWNLOAD_PATH="/tmp/${PACKAGE_NAME}"
 TARGET="/usr/bin/${detector_type}"
 TIMEOUT=120
 
 download_with_curl() {
-    curl -sSL --connect-timeout "${TIMEOUT}" "${URL}" -o "${TARGET}"
+    curl -sSL --connect-timeout "${TIMEOUT}" "${URL}" -o "${DOWNLOAD_PATH}"
     return $?
 }
 
 download_with_wget() {
-    wget -q --timeout="${TIMEOUT}" -O "${TARGET}" "${URL}"
+    wget -q --timeout="${TIMEOUT}" -O "${DOWNLOAD_PATH}" "${URL}"
     return $?
 }
 
@@ -42,19 +56,36 @@ else
 fi
 
 # 检查下载是否成功
-if [ $? -eq 0 ] && [ -f "${TARGET}" ]; then
+if [ $? -eq 0 ] && [ -f "${DOWNLOAD_PATH}" ]; then
     # 检查文件大小
-    if [ -s "${TARGET}" ]; then
+    if [ -s "${DOWNLOAD_PATH}" ]; then
+        echo "Successfully downloaded ${PACKAGE_NAME}"
+        
+        # 直接解压文件到目标位置
+        echo "Extracting ${PACKAGE_NAME}..."
+        tar -xzf "${DOWNLOAD_PATH}" -O > "${TARGET}"
+        
+        # 检查解压是否成功
+        if [ $? -ne 0 ] || [ ! -s "${TARGET}" ]; then
+            echo "Error: Failed to extract ${PACKAGE_NAME}"
+            rm -f "${DOWNLOAD_PATH}" "${TARGET}"
+            exit 1
+        fi
+        
+        # 设置可执行权限
         chmod +x "${TARGET}"
-        echo "Successfully downloaded and set executable permission for ${TARGET}"
+        echo "Successfully installed ${TARGET}"
+        
+        # 清理临时文件
+        rm -f "${DOWNLOAD_PATH}"
     else
         echo "Error: Downloaded file is empty"
-        rm -f "${TARGET}"
+        rm -f "${DOWNLOAD_PATH}"
         exit 1
     fi
 else
     echo "Error: Failed to download file"
-    rm -f "${TARGET}"
+    rm -f "${DOWNLOAD_PATH}"
     exit 1
 fi
 
@@ -68,6 +99,7 @@ After=network.target
 
 [Service]
 Type=simple
+Environment=FPING_API_URL="http://my-fping-job.com/job"
 ExecStart=/usr/bin/${detector_type}
 Restart=always
 
@@ -94,6 +126,7 @@ elif [ -f /etc/init.d ]; then
 
 case "\$1" in
     start)
+        export FPING_API_URL="http://my-fping-job.com/job"
         /usr/bin/${detector_type} &
         ;;
     stop)
@@ -118,6 +151,7 @@ description "${detector_type} Service"
 start on runlevel [2345]
 stop on runlevel [016]
 respawn
+env FPING_API_URL="http://my-fping-job.com/job"
 exec /usr/bin/${detector_type}
 EOF
 

@@ -140,7 +140,6 @@ int central_func(int argc, char **argv)
     char useragent[256];
     int sleepsec = DEFAULT_INTERVAL;
     char central_request_url[4096];
-    // char central_commitjob_url[4096];
     string next;
     string postdata;
     if (argc != 1) {
@@ -161,8 +160,10 @@ int central_func(int argc, char **argv)
     crtfun::setup_http_post_json(true);
     // ensure that the server has sufficient time for processing
     crtfun::setup_http_global_timeout(90000);
-
-    // snprintf(central_commitjob_url, 4096, "%sjob", CENTRAL_MODE);
+    char *env_url = getenv("FPING_API_URL");
+    if (env_url == NULL || env_url[0] == '\0') {
+        url = CENTRAL_MODE;
+    }
 
     while (1) {
         sleepsec += RETRY_CONCESSION;
