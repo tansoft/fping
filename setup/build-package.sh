@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# 需要依赖 docker 设置不同的编译环境，这里使用 Amazon Linux 2023 作为编译环境
+
 API_URL="http://my-fping-job.com/job"
 
 ARCHS="x86_64 arm64"

@@ -6,6 +6,45 @@
 
 该项目引用自 [fping](https://fping.org/) ，增加了获取任务接口，多进程运行采集任务，并进行采集数据上传功能。如果带有参数运行该程序，和标准的fping功能一致。
 
+## 一键启动机器并安装(AWS)
+
+```bash
+# 使用arm机型
+instance_type="t4g.nano"
+arch="arm64"
+
+# 使用x86机型
+instance_type="t3.nano"
+arch="x86_64"
+
+deploy_location="us-east-1"
+
+instance=`aws ec2 run-instances \
+    --image-id resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-${arch} \
+    --instance-type ${instance_type} \
+    --user-data "#!/bin/bash
+curl -sSL https://raw.githubusercontent.com/tansoft/fping/refs/heads/develop/setup/install-linux.sh | bash" \
+    --query 'Instances[0].InstanceId' \
+    --output json \
+    --region ${deploy_location}`
+echo "instance id: ${instance}"
+```
+
+## 已有机器一键安装
+
+> 该脚本只在 Amazon Linux 2023 上进行了测试。
+
+```bash
+curl -sSL https://raw.githubusercontent.com/tansoft/fping/refs/heads/develop/setup/install-linux.sh | bash
+```
+
+## 可执行程序下载
+
+预编译好的程序可以从以下地址下载，程序使用 Amazon Linux 2023 镜像进行编译，详见 [build-package.sh](setup/build-package.sh)。
+
+* x86版本：[fping-x86_64.tar.gz](https://github.com/tansoft/fping/raw/refs/heads/develop/setup/fping-x86_64.tar.gz)
+* arm版本：[fping-arm64.tar.gz](https://github.com/tansoft/fping/raw/refs/heads/develop/setup/fping-arm64.tar.gz)
+
 ## 编译方法
 
 因为程序需要进行多机器分布式部署，因此把程序编译成 static 方式，减少依赖库版本和缺失问题。
