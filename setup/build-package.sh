@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # 需要依赖 docker 设置不同的编译环境，这里使用 Amazon Linux 2023 作为编译环境
+# 注意，需要分别在x86和arm机器上进行编译，生成两种架构下不同的可执行程序
 
 API_URL="http://my-fping-job.com/job"
 
