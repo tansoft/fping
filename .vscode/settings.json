@@ -1,0 +1,13 @@
+{
+    "files.eol": "\n",
+    "files.associations": {
+        "deque": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "stdexcept": "cpp"
+    }
+}

@@ -162,12 +162,12 @@ int central_func(int argc, char **argv)
     crtfun::setup_http_global_timeout(90000);
     char *env_url = getenv("FPING_API_URL");
     if (env_url == NULL || env_url[0] == '\0') {
-        url = CENTRAL_MODE;
+        env_url = CENTRAL_MODE;
     }
 
     while (1) {
         sleepsec += RETRY_CONCESSION;
-        snprintf(central_request_url, 4096, "%s?next=%s&cpu=%.2f&mem=%.2f", CENTRAL_MODE, next.c_str(), get_cpu(), get_process_memory_use());
+        snprintf(central_request_url, 4096, "%s?next=%s&cpu=%.2f&mem=%.2f", env_url, next.c_str(), get_cpu(), get_process_memory_use());
         string json = crtfun::http_download_to_str(central_request_url, postdata.empty() ? 0 : postdata.c_str());
         crtdebug("[HTTP]ret:%s\n", json.c_str());
         if (!json.empty()) {

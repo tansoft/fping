@@ -51,9 +51,9 @@ curl -sSL https://raw.githubusercontent.com/tansoft/fping/refs/heads/develop/set
 
 ```bash
 # lib from yum
-#yum -y install glibc-static libstdc++-static
+#yum -y install git automake g++ glibc-static libstdc++-static
 # lib from dnf
-#dnf -y install glibc-static libstdc++-static
+#dnf -y install git automake g++ glibc-static libstdc++-static
 # mac for test
 #brew install gcc
 # 源码编译
@@ -67,7 +67,7 @@ cd fping
 # 如果需要调试，可以增加参数 --enable-debug
 ./configure --enable-centralmode="http://my-fping-job.com/job"
 make
-cd src && tar -zcvf ../setup/fping-x86_64.tar.gz fping && cd ..
+./src/fping
 ```
 
 为了复用已经编译好的程序，程序会先判断环境变量 FPING_API_URL ，如果有则以该环境变量指向的地址为准。

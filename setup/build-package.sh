@@ -10,11 +10,11 @@ TMP_PATH=$(mktemp -d)
 
 for ARCH in ${ARCHS}
 do
-    docker run -v ${TMP_PATH}:/var/task "public.ecr.aws/sam/build-provided.al2023:latest-${ARCH}" /bin/sh -c "dnf -y install glibc-static libstdc++-static;git clone https://github.com/tansoft/fping;cd fping;./autogen.sh;./configure --enable-centralmode='${API_URL}';make;cd ..;mv fping/src/fping fping;exit"
+    docker run -v ${TMP_PATH}:/var/task "public.ecr.aws/sam/build-provided.al2023:latest-${ARCH}" /bin/sh -c "dnf -y install git automake g++ glibc-static libstdc++-static;git clone https://github.com/tansoft/fping;cd fping;./autogen.sh;./configure --enable-centralmode='${API_URL}';make;cd ..;mv fping/src/fping fping-job;exit"
     (
         cd ${TMP_PATH}
-        tar -zcvf fping-${ARCH}.tar.gz fping
-        rm -f fping
+        tar -zcvf fping-${ARCH}.tar.gz fping-job
+        rm -rf fping fping-job
     )
 done
 
