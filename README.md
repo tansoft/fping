@@ -6,10 +6,12 @@
 
 该项目引用自 [fping](https://fping.org/) ，增加了获取任务接口，多进程运行采集任务，并进行采集数据上传功能。如果带有参数运行该程序，和标准的fping功能一致。
 
+> 注意：安装脚本只在 Amazon Linux 2023 上进行了测试，脚本会生成一个系统服务。
+
 ## 一键启动机器并安装(AWS)
 
 ```bash
-# 使用arm机型
+# 使用arm机型（推荐，性价比更高）
 instance_type="t4g.nano"
 arch="arm64"
 
@@ -32,15 +34,42 @@ echo "instance id: ${instance}"
 
 ## 已有机器一键安装
 
-> 该脚本只在 Amazon Linux 2023 上进行了测试。
-
 ```bash
 curl -sSL https://raw.githubusercontent.com/tansoft/fping/refs/heads/develop/setup/install-linux.sh | bash
 ```
 
-## 可执行程序下载
+## 升级程序
 
-预编译好的程序可以从以下地址下载，程序使用 Amazon Linux 2023 镜像进行编译，详见 [build-package.sh](setup/build-package.sh)。
+```bash
+curl -sSL https://raw.githubusercontent.com/tansoft/fping/refs/heads/develop/setup/update-linux.sh | bash
+```
+
+## 卸载程序
+
+```bash
+curl -sSL https://raw.githubusercontent.com/tansoft/fping/refs/heads/develop/setup/uninstall-linux.sh | bash
+```
+
+## 自定义服务名字
+
+可以指定服务的名字，例如：fping-pingable
+
+```bash
+# 安装：
+curl -sSL https://raw.githubusercontent.com/tansoft/fping/refs/heads/develop/setup/install-linux.sh | sed 's/fping-job/fping-pingable/g' | bash
+
+# 更新：
+curl -sSL https://raw.githubusercontent.com/tansoft/fping/refs/heads/develop/setup/update-linux.sh | sed 's/fping-job/fping-pingable/g' | bash
+
+# 卸载：
+curl -sSL https://raw.githubusercontent.com/tansoft/fping/refs/heads/develop/setup/uninstall-linux.sh | sed 's/fping-job/fping-pingable/g' | bash
+```
+
+## 单独下载可执行程序
+
+预编译好的程序可以从以下地址下载，程序解压后可以直接运行。
+
+程序使用 Amazon Linux 2023 镜像进行编译，详见 [build-package.sh](setup/build-package.sh)。
 
 * x86版本：[fping-x86_64.tar.gz](https://github.com/tansoft/fping/raw/refs/heads/develop/setup/fping-x86_64.tar.gz)
 * arm版本：[fping-arm64.tar.gz](https://github.com/tansoft/fping/raw/refs/heads/develop/setup/fping-arm64.tar.gz)
